@@ -1,0 +1,980 @@
+> write.csv(news_data, "news_data.csv", quote = F)
+> news_data <- read.csv("news_data.csv", header = T, stringsAsFactors = F)
+> str(news_data)
+'data.frame':	24 obs. of  2 variables:
+ $ X: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ x: chr  "안철수 野 신당 창당 나쁘지 않아 김세연 다원적 정치 가능 " "안철수 野 신당 나쁘지 않아 김세연 생각 비슷한 부분 많아 " "안철수 야권 정당을 만들자는 그것도 나쁘지 않다 " "무역협회 코로나 이후 국제통상 쟁점은 환경 디지털 노동 " ...
+> names(news_data) <- c("no", "news_text")
+> head(news_data)
+  no
+1  1
+2  2
+3  3
+4  4
+5  5
+6  6
+                                                 news_text
+1 안철수 野 신당 창당 나쁘지 않아 김세연 다원적 정치 가능 
+2 안철수 野 신당 나쁘지 않아 김세연 생각 비슷한 부분 많아 
+3          안철수 야권 정당을 만들자는 그것도 나쁘지 않다 
+4   무역협회 코로나 이후 국제통상 쟁점은 환경 디지털 노동 
+5          무협 코로나 이후 통상 3대축은 환경 디지털 노동 
+6       무협 코로나19 이후 통상 3대 축은 환경 디지털 노동 
+> news_text <- news_data$news_text
+> news_text
+ [1] "안철수 野 신당 창당 나쁘지 않아 김세연 다원적 정치 가능 "      
+ [2] "안철수 野 신당 나쁘지 않아 김세연 생각 비슷한 부분 많아 "      
+ [3] "안철수 야권 정당을 만들자는 그것도 나쁘지 않다 "               
+ [4] "무역협회 코로나 이후 국제통상 쟁점은 환경 디지털 노동 "        
+ [5] "무협 코로나 이후 통상 3대축은 환경 디지털 노동 "               
+ [6] "무협 코로나19 이후 통상 3대 축은 환경 디지털 노동 "            
+ [7] "대학병원 중심 감염 확산 전라북도 거리두기 1 5단계 격상"        
+ [8] "어제 수도권 외 80여 명 확진 광주 전북 대학병원 확산"           
+ [9] "전주 익산 코로나 대응 상향 전북 감염 확산"                     
+[10] "극지방 추워지면 열대 태평양 무역풍 세진다"                     
+[11] "극지 냉각이 열대 태평양 무역풍 더 세게 한다"                   
+[12] "극지방 더 차갑게 하면 열대 태평양 바람 더 세진다"              
+[13] "정총리 수도권 거리두기 2단계 조정방안 논의 "                   
+[14] "서울 신규확진 121명 나흘 연속 100명대 학원 사우나 모임 등 확산"
+[15] "한국전쟁전후 거제지역 민간인희생자 위령비 제막"                
+[16] "배달의민족 실시간 탐지로 허위 리뷰 고른다"                     
+[17] "전남대병원 응급실 25일 운영 재개 중증 환자만 진료"             
+[18] "노량진 학원發 76명 확진 학교 키즈카페 등 일상 감염 확산"       
+[19] "주식시장 진출한 다단계 조직 고수익 약속 조심하세요"            
+[20] "모더나 코로나 백신 가격 최대 4만1000원 "                       
+[21] "갓바위 놓인 사진과 사경 寫經 의 의미는 팔공산 기도 열기 후끈 " 
+[22] "野 文 대북정책 한미관계 도움 안돼 우리도 방미단 추진 "         
+[23] "강원도 감염병 교수들 거리두기 격상 요구 성명"                  
+[24] "어린이공원에서 시비 끝에 행인 살해한 50대 징역 15년 "          
+> user_dic <- data.frame(term = c("펜데믹", "코로나19", "타다"), tag = 'ncn')
+> buildDictionary(ext_dic = 'sejong', user_dic = user_dic)
+에러: attempt to write a readonly database
+> exNouns <- function(x) { paste(extractNoun(x), collapse = " ")}
+> news_nouns <- sapply(news_text, exNouns)
+> news_nouns
+         안철수 野 신당 창당 나쁘지 않아 김세연 다원적 정치 가능  
+                     "안철수 野 신당 창당 김세연 다원 적 정치 능" 
+         안철수 野 신당 나쁘지 않아 김세연 생각 비슷한 부분 많아  
+                     "안철수 野 신당 김세연 생각 비슷 한 부분 많" 
+                  안철수 야권 정당을 만들자는 그것도 나쁘지 않다  
+                                       "안철수 야권 정당 그것 않" 
+           무역협회 코로나 이후 국제통상 쟁점은 환경 디지털 노동  
+                 "무역 협회 코 이후 국제통상 쟁점 환경 디지털 노" 
+                  무협 코로나 이후 통상 3대축은 환경 디지털 노동  
+                               "무협 코 이후 3 축 환경 디지털 노" 
+               무협 코로나19 이후 통상 3대 축은 환경 디지털 노동  
+                      "무협 코로나19 이후 3 대 축 환경 디지털 노" 
+           대학병원 중심 감염 확산 전라북도 거리두기 1 5단계 격상 
+       "대학 병원 중심 감염 확산 전라 북도 거리 두 1 5단계 격 상" 
+              어제 수도권 외 80여 명 확진 광주 전북 대학병원 확산 
+              "어제 수도권 외 80 명 확진 광주 북 대학 병원 확 산" 
+                        전주 익산 코로나 대응 상향 전북 감염 확산 
+                           "전주 익산 코 대응 상향 북 감염 확 산" 
+                        극지방 추워지면 열대 태평양 무역풍 세진다 
+                                   "극지방 열 대 태평 양 무역 풍" 
+                      극지 냉각이 열대 태평양 무역풍 더 세게 한다 
+                          "극지 냉각 열 대 태평 양 무역 풍 세 한" 
+                 극지방 더 차갑게 하면 열대 태평양 바람 더 세진다 
+                                      "극지방 열 대 태평 양 바람" 
+                      정총리 수도권 거리두기 2단계 조정방안 논의  
+                       "정총리 수도권 거리 두 2단계 조정 방안 의" 
+   서울 신규확진 121명 나흘 연속 100명대 학원 사우나 모임 등 확산 
+"서울 신규확진 121 명 나흘 연속 100 명 학원 사우나 모임 등 확 산" 
+                   한국전쟁전후 거제지역 민간인희생자 위령비 제막 
+                 "한국전쟁 전후 거제지역 민간인 희생자 위령비 저" 
+                        배달의민족 실시간 탐지로 허위 리뷰 고른다 
+                               "배달의민족 실시간 탐지 허위 리뷰" 
+                전남대병원 응급실 25일 운영 재개 중증 환자만 진료 
+                     "남대 병원 응급실 25 운영 재개 중증 환자 료" 
+          노량진 학원發 76명 확진 학교 키즈카페 등 일상 감염 확산 
+     "노량진 학원 發 76 명 확진 학교 키즈카페 등 일상 감염 확 산" 
+               주식시장 진출한 다단계 조직 고수익 약속 조심하세요 
+             "주식시장 진출 한 다단계 조직 고수익 약속 조심 하세" 
+                          모더나 코로나 백신 가격 최대 4만1000원  
+                                 "모 코 백신 가격 최대 4 만 1000" 
+    갓바위 놓인 사진과 사경 寫經 의 의미는 팔공산 기도 열기 후끈  
+                "갓바위 사진 사경 寫經 의 의미 팔공산 기도 후 끈" 
+            野 文 대북정책 한미관계 도움 안돼 우리도 방미단 추진  
+                "野 文 대북정책 한미관계 도움 우리 방미 단 추 진" 
+                     강원도 감염병 교수들 거리두기 격상 요구 성명 
+                 "강원도 감염 병 교수 들 거리 두 격상 요구 성 명" 
+             어린이공원에서 시비 끝에 행인 살해한 50대 징역 15년  
+              "어린이 공원 시비 끝 행인 살해 한 50 대 징역 15 년" 
+> library("tm"
++ )
+
+다음의 패키지를 부착합니다: ‘tm’
+
+The following object is masked from ‘package:arules’:
+
+    inspect
+
+> newsCorpus <- Corpus(VectorSource(news_nouns))
+> newsCorpus
+<<SimpleCorpus>>
+Metadata:  corpus specific: 1, document level (indexed): 0
+Content:  documents: 24
+> inspect(newsCorpus[1:5]) 
+<<SimpleCorpus>>
+Metadata:  corpus specific: 1, document level (indexed): 0
+Content:  documents: 5
+
+안철수 野 신당 창당 나쁘지 않아 김세연 다원적 정치 가능  
+              안철수 野 신당 창당 김세연 다원 적 정치 능 
+안철수 野 신당 나쁘지 않아 김세연 생각 비슷한 부분 많아  
+              안철수 野 신당 김세연 생각 비슷 한 부분 많 
+         안철수 야권 정당을 만들자는 그것도 나쁘지 않다  
+                                안철수 야권 정당 그것 않 
+  무역협회 코로나 이후 국제통상 쟁점은 환경 디지털 노동  
+          무역 협회 코 이후 국제통상 쟁점 환경 디지털 노 
+         무협 코로나 이후 통상 3대축은 환경 디지털 노동  
+                        무협 코 이후 3 축 환경 디지털 노 
+> TDM <- TermDocumentMatrix(newsCorpus, control = list(wordLengths = c(4, 16)))
+> TDM
+<<TermDocumentMatrix (terms: 109, documents: 24)>>
+Non-/sparse entries: 136/2480
+Sparsity           : 95%
+Maximal term length: 5
+Weighting          : term frequency (tf)
+> tdm.df <- as.data.frame(as.matrix(TDM))
+> dim(tdm.df)
+[1] 109  24
+> wordResult <- sort(rowSums(tdm.df), decreasing = TRUE)
+> wordResult[1:10]
+  감염 안철수 디지털   무역   이후   환경 
+     4      3      3      3      3      3 
+  거리   병원   태평 김세연 
+     3      3      3      2 
+> library(wordcloud)
+> myNames <- names(wordResult)
+> myNames
+  [1] "감염"       "안철수"    
+  [3] "디지털"     "무역"      
+  [5] "이후"       "환경"      
+  [7] "거리"       "병원"      
+  [9] "태평"       "김세연"    
+ [11] "신당"       "무협"      
+ [13] "대학"       "수도권"    
+ [15] "확진"       "극지방"    
+ [17] "학원"       "다원"      
+ [19] "정치"       "창당"      
+ [21] "부분"       "비슷"      
+ [23] "생각"       "그것"      
+ [25] "야권"       "정당"      
+ [27] "국제통상"   "쟁점"      
+ [29] "협회"       "코로나19"  
+ [31] "5단계"      "북도"      
+ [33] "전라"       "중심"      
+ [35] "확산"       "광주"      
+ [37] "어제"       "대응"      
+ [39] "상향"       "익산"      
+ [41] "전주"       "극지"      
+ [43] "냉각"       "바람"      
+ [45] "2단계"      "방안"      
+ [47] "정총리"     "조정"      
+ [49] "나흘"       "모임"      
+ [51] "사우나"     "서울"      
+ [53] "신규확진"   "연속"      
+ [55] "거제지역"   "민간인"    
+ [57] "위령비"     "전후"      
+ [59] "한국전쟁"   "희생자"    
+ [61] "리뷰"       "배달의민족"
+ [63] "실시간"     "탐지"      
+ [65] "허위"       "남대"      
+ [67] "운영"       "응급실"    
+ [69] "재개"       "중증"      
+ [71] "환자"       "노량진"    
+ [73] "일상"       "키즈카페"  
+ [75] "학교"       "고수익"    
+ [77] "다단계"     "약속"      
+ [79] "조심"       "조직"      
+ [81] "주식시장"   "진출"      
+ [83] "하세"       "1000"      
+ [85] "가격"       "백신"      
+ [87] "최대"       "寫經"      
+ [89] "갓바위"     "기도"      
+ [91] "사경"       "사진"      
+ [93] "의미"       "팔공산"    
+ [95] "대북정책"   "도움"      
+ [97] "방미"       "우리"      
+ [99] "한미관계"   "강원도"    
+[101] "격상"       "교수"      
+[103] "요구"       "공원"      
+[105] "살해"       "시비"      
+[107] "어린이"     "징역"      
+[109] "행인"      
+> df <- data.frame(word = myNames, freq = wordResult)
+> head(df)
+         word freq
+감염     감염    4
+안철수 안철수    3
+디지털 디지털    3
+무역     무역    3
+이후     이후    3
+환경     환경    3
+> pal <- brewer.pal(12, "Paired")
+> wordcloud(df$word, df$freq, min.freq = 2,
++ random.order = F, scale = c(4, 0.7),
++ rot.per = .1, colors = pal, family = "malgun")
+33건의 경고들이 발견되었습니다 (이를 확인하기 위해서는 warnings()를 이용하시길 바랍니다).
+> 
+> xy1 <- c(1,2,3,4,5)
+50건 이상의 경고들을 발견되었습니다 (이들 중 처음 50건을 확인하기 위해서는 warnings()를 이용하시길 바랍니다).
+> var(xy1)
+[1] 2.5
+> 
+> 
+> 
+> xy2 <- c(1,1,1,2,2)
+> var(xy2)
+[1] 0.3
+> xy3 <- c(1,2,3,4,5)
+> 
+> sd(xy3)
+[1] 1.581139
+> sqrt(var(xy3))
+[1] 1.581139
+> 
+> 
+> 
+> 
+> 
+> 
+> A <- c(1200, 1600, 5600, 6000, 7000)
+> B <- c(4000, 4500, 4250, 5000, 3650)
+> (1200+1600+5600+6000+7000)/5
+[1] 4280
+> (4000+4500+4250+5000+3650)/5
+[1] 4280
+> mean(A)
+[1] 4280
+> mean(B)
+[1] 4280
+> sum(A);sum(B)
+[1] 21400
+[1] 21400
+> var(A);var(B)
+[1] 7192000
+[1] 260750
+> 
+> 
+> sd(A);sd(B)
+[1] 2681.79
+[1] 510.6369
+> sqrt(var(A));sqrt(var(B))
+[1] 2681.79
+[1] 510.6369
+> min(A);min(B)
+[1] 1200
+[1] 3650
+> max(A);max(B)
+[1] 7000
+[1] 5000
+> 
+> 
+> 
+> 
+> 
+> summary(A);summary(B)
+   Min. 1st Qu.  Median    Mean 3rd Qu. 
+   1200    1600    5600    4280    6000 
+   Max. 
+   7000 
+   Min. 1st Qu.  Median    Mean 3rd Qu. 
+   3650    4000    4250    4280    4500 
+   Max. 
+   5000 
+> 
+> 
+> 
+> a1 <- c("moon", "star", "sun", "sun", "star")
+> b1 <- c(23, 22, 24, 25, 25)
+> c1 <- c("제주","부산","대전","제주","서울")
+> family <- data.frame(Name = a1, Age = b1, Pos = c1)
+> family
+  Name Age  Pos
+1 moon  23 제주
+2 star  22 부산
+3  sun  24 대전
+4  sun  25 제주
+5 star  25 서울
+> family
+  Name Age  Pos
+1 moon  23 제주
+2 star  22 부산
+3  sun  24 대전
+4  sun  25 제주
+5 star  25 서울
+> table(family$Pos)
+
+대전 부산 서울 제주 
+   1    1    1    2 
+> 
+> 
+> chart1 <- table(family$Pos)
+> barplot(chart1)
+> survey_data <- read.csv("014survey.csv", header = T)
+> survey <- survey_data$x
+> View(survey_data)
+> summary(survey)
+   Min. 1st Qu.  Median    Mean 3rd Qu. 
+   1.00    2.00    3.00    2.61    3.00 
+   Max.    NA's 
+   5.00     113 
+> mode_data <- table(survey)
+> mode_data
+survey
+ 1  2  3  4  5 
+20 72 63 25  7 
+> hist(survey)
+> 
+> pie(mode_data)
+> setwd("C:/workspace/rstudio-master/data")
+> data <- read.csv("015descriptive.csv", header = TRUE)
+> data$resident2[data$resident == 1] <- "특별시"
+> View(data)
+> data$resident2[data$resident >= 2 & data$resident <= 4] <- "광역시"
+> data$resident2[data$resident == 5] <- "시구군"
+> x <- table(data$resident2)
+> prop.table(x)
+
+   광역시    시구군    특별시 
+0.3691756 0.1577061 0.4731183 
+> y <- prop.table(x)
+> y2 <- round(y * 100, 2)
+> tmp <- list(x, y2)
+> tmp
+[[1]]
+
+광역시 시구군 특별시 
+   103     44    132 
+
+[[2]]
+
+광역시 시구군 특별시 
+ 36.92  15.77  47.31 
+
+> resident <- do.call(cbind, tmp)
+> 
+> report <- resident
+> report
+       [,1]  [,2]
+광역시  103 36.92
+시구군   44 15.77
+특별시  132 47.31
+> colnames(report) <- c("빈도수", "구성비율%")
+> report
+       빈도수 구성비율%
+광역시    103     36.92
+시구군     44     15.77
+특별시    132     47.31
+> data$gender2[data$gender == 1] <- "남자"
+> data$gender2[data$gender == 2] <- "여자"
+> x <- table(data$gender2)
+> prop.table(x)
+
+     남자      여자 
+0.5824916 0.4175084 
+> y <- prop.table(x)
+> y2 <- round(y * 100, 2)
+> tmp <- list(x, y2)
+> tmp
+[[1]]
+
+남자 여자 
+ 173  124 
+
+[[2]]
+
+ 남자  여자 
+58.25 41.75 
+
+> gender <- do.call(cbind, tmp)
+> report = rbind(report, gender)
+> report
+       빈도수 구성비율%
+광역시    103     36.92
+시구군     44     15.77
+특별시    132     47.31
+남자      173     58.25
+여자      124     41.75
+> data$age2[data$age <= 45] <- "중년층"
+> data$age2[data$age >= 46 & data$age <= 69] <- "장년층"
+> data$age2[data$age >= 70] <- "노년층"
+> x <- table(data$age2)
+> prop.table(x)
+
+    노년층     장년층     중년층 
+0.03000000 0.89666667 0.07333333 
+> y <- prop.table(x)
+> y2 <- round(y * 100, 2)
+> tmp <- list(x, y2)
+> tmp
+[[1]]
+
+노년층 장년층 중년층 
+     9    269     22 
+
+[[2]]
+
+노년층 장년층 중년층 
+  3.00  89.67   7.33 
+
+> age <- do.call(cbind, tmp)
+> report = rbind(report, age)
+> report
+       빈도수 구성비율%
+광역시    103     36.92
+시구군     44     15.77
+특별시    132     47.31
+남자      173     58.25
+여자      124     41.75
+노년층      9      3.00
+장년층    269     89.67
+중년층     22      7.33
+> data$level2[data$level == 1] <- "고졸"
+> data$level2[data$level == 2] <- "대졸"
+> data$level2[data$level == 3] <- "대학원졸"
+> x <- table(data$level2)
+> prop.table(x)
+
+     고졸      대졸  대학원졸 
+0.4076655 0.3484321 0.2439024 
+> y <- prop.table(x)
+> y2 <- round(y * 100, 2)
+> tmp <- list(x, y2)
+> level <- do.call(cbind, tmp)
+> report = rbind(report, level)
+> report
+         빈도수 구성비율%
+광역시      103     36.92
+시구군       44     15.77
+특별시      132     47.31
+남자        173     58.25
+여자        124     41.75
+노년층        9      3.00
+장년층      269     89.67
+중년층       22      7.33
+고졸        117     40.77
+대졸        100     34.84
+대학원졸     70     24.39
+> write.csv(report, "repost_resident.csv", quote = F)
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> setwd("C:/workspace/rstudio-master/data")
+> product <- read.csv("016product.csv", header = TRUE)
+> View(product)
+> summary(product)
+  제품_친밀도     제품_적절성   
+ Min.   :1.000   Min.   :1.000  
+ 1st Qu.:2.000   1st Qu.:3.000  
+ Median :3.000   Median :3.000  
+ Mean   :2.928   Mean   :3.133  
+ 3rd Qu.:4.000   3rd Qu.:4.000  
+ Max.   :5.000   Max.   :5.000  
+  제품_만족도   
+ Min.   :1.000  
+ 1st Qu.:3.000  
+ Median :3.000  
+ Mean   :3.095  
+ 3rd Qu.:4.000  
+ Max.   :5.000  
+> sd(product$제품_친밀도); sd(product$제품_적절성); sd(product$제품_만족도)
+[1] 0.9703446
+[1] 0.8596574
+[1] 0.8287436
+> cor(product$제품_친밀도, product$제품_적절성)
+[1] 0.4992086
+> cor(product$제품_친밀도, product$제품_만족도)
+[1] 0.467145
+> cor(product$제품_적절성, product$제품_만족도)
+[1] 0.7668527
+> cor(product$제품_적절성 + product$제품_친밀도, product$제품_만족도)
+[1] 0.7017394
+> cor(product, method = "pearson")
+            제품_친밀도 제품_적절성
+제품_친밀도   1.0000000   0.4992086
+제품_적절성   0.4992086   1.0000000
+제품_만족도   0.4671450   0.7668527
+            제품_만족도
+제품_친밀도   0.4671450
+제품_적절성   0.7668527
+제품_만족도   1.0000000
+> install.packages("corrgram")
+WARNING: Rtools is required to build R packages but is not currently installed. Please download and install the appropriate version of Rtools before proceeding:
+
+https://cran.rstudio.com/bin/windows/Rtools/
+Installing package into ‘C:/Users/ADMIN/Documents/R/win-library/3.6’
+(as ‘lib’ is unspecified)
+also installing the dependencies ‘iterators’, ‘gridExtra’, ‘foreach’, ‘viridis’, ‘gtools’, ‘caTools’, ‘TSP’, ‘qap’, ‘gclus’, ‘dendextend’, ‘gplots’, ‘registry’, ‘seriation’
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/iterators_1.0.13.zip'을 시도합니다
+Content type 'application/zip' length 343333 bytes (335 KB)
+downloaded 335 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/gridExtra_2.3.zip'을 시도합니다
+Content type 'application/zip' length 1109465 bytes (1.1 MB)
+downloaded 1.1 MB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/foreach_1.5.1.zip'을 시도합니다
+Content type 'application/zip' length 145953 bytes (142 KB)
+downloaded 142 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/viridis_0.5.1.zip'을 시도합니다
+Content type 'application/zip' length 1866755 bytes (1.8 MB)
+downloaded 1.8 MB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/gtools_3.8.2.zip'을 시도합니다
+Content type 'application/zip' length 336453 bytes (328 KB)
+downloaded 328 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/caTools_1.18.0.zip'을 시도합니다
+Content type 'application/zip' length 330462 bytes (322 KB)
+downloaded 322 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/TSP_1.1-10.zip'을 시도합니다
+Content type 'application/zip' length 1027187 bytes (1003 KB)
+downloaded 1003 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/qap_0.1-1.zip'을 시도합니다
+Content type 'application/zip' length 537767 bytes (525 KB)
+downloaded 525 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/gclus_1.3.2.zip'을 시도합니다
+Content type 'application/zip' length 416727 bytes (406 KB)
+downloaded 406 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/dendextend_1.14.0.zip'을 시도합니다
+Content type 'application/zip' length 3880446 bytes (3.7 MB)
+downloaded 3.7 MB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/gplots_3.1.0.zip'을 시도합니다
+Content type 'application/zip' length 604216 bytes (590 KB)
+downloaded 590 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/registry_0.5-1.zip'을 시도합니다
+Content type 'application/zip' length 197133 bytes (192 KB)
+downloaded 192 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/seriation_1.2-9.zip'을 시도합니다
+Content type 'application/zip' length 1235332 bytes (1.2 MB)
+downloaded 1.2 MB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/corrgram_1.13.zip'을 시도합니다
+Content type 'application/zip' length 322341 bytes (314 KB)
+downloaded 314 KB
+
+package ‘iterators’ successfully unpacked and MD5 sums checked
+package ‘gridExtra’ successfully unpacked and MD5 sums checked
+package ‘foreach’ successfully unpacked and MD5 sums checked
+package ‘viridis’ successfully unpacked and MD5 sums checked
+package ‘gtools’ successfully unpacked and MD5 sums checked
+package ‘caTools’ successfully unpacked and MD5 sums checked
+package ‘TSP’ successfully unpacked and MD5 sums checked
+package ‘qap’ successfully unpacked and MD5 sums checked
+package ‘gclus’ successfully unpacked and MD5 sums checked
+package ‘dendextend’ successfully unpacked and MD5 sums checked
+package ‘gplots’ successfully unpacked and MD5 sums checked
+package ‘registry’ successfully unpacked and MD5 sums checked
+package ‘seriation’ successfully unpacked and MD5 sums checked
+package ‘corrgram’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+	C:\Users\ADMIN\AppData\Local\Temp\RtmpqirBvs\downloaded_packages
+> library(corrgram)
+> corrgram(product)
+> 
+> 
+> corrgram(product, upper.panel = panel.conf)
+> corrgram(product, lower.panel = panel.conf)
+> install.packages("PerformanceAnalytics")
+WARNING: Rtools is required to build R packages but is not currently installed. Please download and install the appropriate version of Rtools before proceeding:
+
+https://cran.rstudio.com/bin/windows/Rtools/
+Installing package into ‘C:/Users/ADMIN/Documents/R/win-library/3.6’
+(as ‘lib’ is unspecified)
+also installing the dependencies ‘xts’, ‘quadprog’, ‘zoo’
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/xts_0.12.1.zip'을 시도합니다
+Content type 'application/zip' length 947634 bytes (925 KB)
+downloaded 925 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/quadprog_1.5-8.zip'을 시도합니다
+Content type 'application/zip' length 54859 bytes (53 KB)
+downloaded 53 KB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/zoo_1.8-8.zip'을 시도합니다
+Content type 'application/zip' length 1096250 bytes (1.0 MB)
+downloaded 1.0 MB
+
+URL 'https://cran.rstudio.com/bin/windows/contrib/3.6/PerformanceAnalytics_2.0.4.zip'을 시도합니다
+Content type 'application/zip' length 3171246 bytes (3.0 MB)
+downloaded 3.0 MB
+
+package ‘xts’ successfully unpacked and MD5 sums checked
+package ‘quadprog’ successfully unpacked and MD5 sums checked
+package ‘zoo’ successfully unpacked and MD5 sums checked
+package ‘PerformanceAnalytics’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+	C:\Users\ADMIN\AppData\Local\Temp\RtmpqirBvs\downloaded_packages
+> library(PerformanceAnalytics)
+필요한 패키지를 로딩중입니다: xts
+필요한 패키지를 로딩중입니다: zoo
+
+다음의 패키지를 부착합니다: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+
+다음의 패키지를 부착합니다: ‘PerformanceAnalytics’
+
+The following object is masked from ‘package:wordcloud’:
+
+    textplot
+
+The following object is masked from ‘package:graphics’:
+
+    legend
+
+> chart.Correlation(product, histogram = , pch = "+")
+> cor(product, method = "spearman")
+            제품_친밀도 제품_적절성
+제품_친밀도   1.0000000   0.5110776
+제품_적절성   0.5110776   1.0000000
+제품_만족도   0.5012007   0.7485096
+            제품_만족도
+제품_친밀도   0.5012007
+제품_적절성   0.7485096
+제품_만족도   1.0000000
+> https://cran.r-project.org/web/packages/scatterplot3d/index.html
+에러: 예기치 않은 '/'입니다 in "https:/"
+> 
+> 
+> 
+> 
+> 
+> s1 <- c(1, 2, 1, 2, 3, 4, 2, 3, 4, 5)
+> s2 <- c(1, 3, 1, 2, 3, 4, 2, 4, 3, 4)
+> s3 <- c(2, 3, 2, 3, 2, 3, 5, 3, 4, 2)
+> s4 <- c(2, 4, 2, 3, 2, 3, 5, 3, 4, 1)
+> s5 <- c(4, 5, 4, 5, 2, 1, 5, 2, 4, 3)
+> s6 <- c(4, 3, 4, 4, 2, 1, 5, 2, 4, 2)
+> name <- 1:10
+> subject <- data.frame(s1, s2, s3, s4, s5, s6)
+> View(subject)
+> str(subject)
+'data.frame':	10 obs. of  6 variables:
+ $ s1: num  1 2 1 2 3 4 2 3 4 5
+ $ s2: num  1 3 1 2 3 4 2 4 3 4
+ $ s3: num  2 3 2 3 2 3 5 3 4 2
+ $ s4: num  2 4 2 3 2 3 5 3 4 1
+ $ s5: num  4 5 4 5 2 1 5 2 4 3
+ $ s6: num  4 3 4 4 2 1 5 2 4 2
+> pc <- prcomp(subject)
+> summary(pc)
+Importance of components:
+                         PC1    PC2
+Standard deviation     2.389 1.5532
+Proportion of Variance 0.616 0.2603
+Cumulative Proportion  0.616 0.8763
+                           PC3     PC4
+Standard deviation     0.87727 0.56907
+Proportion of Variance 0.08305 0.03495
+Cumulative Proportion  0.95936 0.99431
+                           PC5     PC6
+Standard deviation     0.19315 0.12434
+Proportion of Variance 0.00403 0.00167
+Cumulative Proportion  0.99833 1.00000
+> plot(pc)
+> en <- eigen(cor(subject))
+> names(en)
+[1] "values"  "vectors"
+> en$values
+[1] 3.44393944 1.88761725 0.43123968
+[4] 0.19932073 0.02624961 0.01163331
+> en$vectors
+           [,1]         [,2]        [,3]
+[1,] -0.4062499 -0.351093036  0.63460534
+[2,] -0.4319311 -0.400526644  0.11564711
+[3,]  0.2542077 -0.628807884 -0.06984072
+[4,]  0.3017115 -0.566028650 -0.37734321
+[5,]  0.4763815  0.008436692  0.58035475
+[6,]  0.5155637  0.021286661  0.31595023
+           [,4]        [,5]        [,6]
+[1,]  0.3149622  0.45699508  0.03041553
+[2,] -0.4422216 -0.57042232  0.34452594
+[3,]  0.3339036 -0.35389906 -0.54622817
+[4,] -0.2468016  0.50326085  0.36333366
+[5,] -0.6016209  0.05643527 -0.26654314
+[6,]  0.4133867 -0.28995329  0.61559319
+> plot(en$values, type = "o")
+> cor(subject)
+            s1          s2         s3
+s1  1.00000000  0.86692145 0.05847768
+s2  0.86692145  1.00000000 0.06745441
+s3  0.05847768  0.06745441 1.00000000
+s4 -0.15959528 -0.02401230 0.92394333
+s5 -0.55045878 -0.63495808 0.35069667
+s6 -0.62627585 -0.79688923 0.44287589
+           s4         s5         s6
+s1 -0.1595953 -0.5504588 -0.6262758
+s2 -0.0240123 -0.6349581 -0.7968892
+s3  0.9239433  0.3506967  0.4428759
+s4  1.0000000  0.4207582  0.4399890
+s5  0.4207582  1.0000000  0.8733514
+s6  0.4399890  0.8733514  1.0000000
+> 
+> 
+> 
+> 
+> 
+> result <- factanal(subject, factors = 2, rotation = "varimax")
+> result 
+
+Call:
+factanal(x = subject, factors = 2, rotation = "varimax")
+
+Uniquenesses:
+   s1    s2    s3    s4    s5    s6 
+0.250 0.015 0.005 0.136 0.407 0.107 
+
+Loadings:
+   Factor1 Factor2
+s1  0.862         
+s2  0.988         
+s3          0.997 
+s4 -0.115   0.923 
+s5 -0.692   0.338 
+s6 -0.846   0.421 
+
+               Factor1 Factor2
+SS loadings      2.928   2.152
+Proportion Var   0.488   0.359
+Cumulative Var   0.488   0.847
+
+Test of the hypothesis that 2 factors are sufficient.
+The chi square statistic is 11.32 on 4 degrees of freedom.
+The p-value is 0.0232 
+> 
+> 
+> 
+> result <- factanal(subject, 
++ factor = 3, 
++ rotation = "varimax", 
++ scores = "regression")
+> result
+
+Call:
+factanal(x = subject, factors = 3, scores = "regression", rotation = "varimax")
+
+Uniquenesses:
+   s1    s2    s3    s4    s5    s6 
+0.005 0.056 0.051 0.005 0.240 0.005 
+
+Loadings:
+   Factor1 Factor2 Factor3
+s1 -0.379           0.923 
+s2 -0.710   0.140   0.649 
+s3  0.236   0.931   0.166 
+s4  0.120   0.983  -0.118 
+s5  0.771   0.297  -0.278 
+s6  0.900   0.301  -0.307 
+
+               Factor1 Factor2 Factor3
+SS loadings      2.122   2.031   1.486
+Proportion Var   0.354   0.339   0.248
+Cumulative Var   0.354   0.692   0.940
+
+The degrees of freedom for the model is 0 and the fit was 0.7745 
+> 
+> 
+> 
+> 
+> attributes(result)
+$names
+ [1] "converged"    "loadings"    
+ [3] "uniquenesses" "correlation" 
+ [5] "criteria"     "factors"     
+ [7] "dof"          "method"      
+ [9] "rotmat"       "scores"      
+[11] "n.obs"        "call"        
+
+$class
+[1] "factanal"
+
+> result$loadings
+
+Loadings:
+   Factor1 Factor2 Factor3
+s1 -0.379           0.923 
+s2 -0.710   0.140   0.649 
+s3  0.236   0.931   0.166 
+s4  0.120   0.983  -0.118 
+s5  0.771   0.297  -0.278 
+s6  0.900   0.301  -0.307 
+
+               Factor1 Factor2 Factor3
+SS loadings      2.122   2.031   1.486
+Proportion Var   0.354   0.339   0.248
+Cumulative Var   0.354   0.692   0.940
+> print(result, digits = 2, cutoff = 0.5)
+
+Call:
+factanal(x = subject, factors = 3, scores = "regression", rotation = "varimax")
+
+Uniquenesses:
+  s1   s2   s3   s4   s5   s6 
+0.00 0.06 0.05 0.00 0.24 0.00 
+
+Loadings:
+   Factor1 Factor2 Factor3
+s1                  0.92  
+s2 -0.71            0.65  
+s3          0.93          
+s4          0.98          
+s5  0.77                  
+s6  0.90                  
+
+               Factor1 Factor2 Factor3
+SS loadings       2.12    2.03    1.49
+Proportion Var    0.35    0.34    0.25
+Cumulative Var    0.35    0.69    0.94
+
+The degrees of freedom for the model is 0 and the fit was 0.7745 
+> 
+> 
+> 
+> print(result$loadings, cutoff = 0)
+
+Loadings:
+   Factor1 Factor2 Factor3
+s1 -0.379  -0.005   0.923 
+s2 -0.710   0.140   0.649 
+s3  0.236   0.931   0.166 
+s4  0.120   0.983  -0.118 
+s5  0.771   0.297  -0.278 
+s6  0.900   0.301  -0.307 
+
+               Factor1 Factor2 Factor3
+SS loadings      2.122   2.031   1.486
+Proportion Var   0.354   0.339   0.248
+Cumulative Var   0.354   0.692   0.940
+> plot(result$scores[ , c(1:2)],
++ main = "Factor1과 Factor2 요인점수 행렬")
+> text(result$scores[ , 1], result$scores[ , 2],
++ labels = name, cex = 0.7, pos = 3, col = "blue")
+> points(result$loadings[ , c(1:2)], pch = 19, col = "red")
+> text(result$loadings[ , 1], result$loadings[ , 2],
++ labels = rownames(result$loadings),
++ cex = 0.8, pos = 3, col = "red")
+> plot(result$scores[ , c(1, 3)],
++ main = "Factor1과 Factor3 요인점수 행렬")
+> text(result$scores[ , 1], result$scores[ , 3],
++ labels = name, cex = 0.7, pos = 3, col = "blue")
+> points(result$loadings[ , c(1, 3)], pch = 19, col = "red")
+> text(result$loadings[ , 1], result$loadings[ , 3],
++ labels = rownames(result$loadings), 
++ cex = 0.8, pos= 3, col = "red")
+> library(scatterplot3d)
+경고메시지(들): 
+패키지 ‘scatterplot3d’는 R 버전 4.0.3에서 작성되었습니다 
+> Factor1 <- result$scores[ , 1]
+> Factor2 <- result$scores[ , 2]
+> Factor3 <- result$scores[ , 3]
+> d3 <- scatterplot3d(Factor1, Factor2, Factor3, type = 'p')
+> loadings1 <- result$loadings[ , 1]
+> loadings2 <- result$loadings[ , 2]
+> loadings3 <- result$loadings[ , 3]
+> d3$points3d(loadings1, loadings2, loadings3, 
++ bg = 'red', pch = 21, cex = 2, type = 'h')
+> setwd("C:/workspace/rstudio-master/data")
+> product <- read.csv("016product.csv", header = TRUE)
+> head(product)
+  제품_친밀도 제품_적절성 제품_만족도
+1           3           4           3
+2           3           3           2
+3           4           4           4
+4           2           2           2
+5           2           2           2
+6           3           3           3
+> View(product)
+> y = product$제품_만족도 
+> x = product$제품_적절성
+> df <- data.frame(x, y)
+> result.lm <- lm(formula = y ~ x, data = df)
+> result.lm
+
+Call:
+lm(formula = y ~ x, data = df)
+
+Coefficients:
+(Intercept)            x  
+     0.7789       0.7393  
+
+> names(result.lm)
+ [1] "coefficients"  "residuals"    
+ [3] "effects"       "rank"         
+ [5] "fitted.values" "assign"       
+ [7] "qr"            "df.residual"  
+ [9] "xlevels"       "call"         
+[11] "terms"         "model"        
+> fitted.values(result.lm)[1:2]
+       1        2 
+3.735963 2.996687 
+> head(df, 1)
+  x y
+1 4 3
+> 
+> Y = 0.7789 + 0.7393 * 4
+> Y
+[1] 3.7361
+> 
+> 
+> 
+> 
+> 3 - 3.735963
+[1] -0.735963
+> 
+> 
+> residuals(result.lm)[1:2]
+         1          2 
+-0.7359630 -0.9966869 
+> plot(formula = y ~ x, data = product)
+> result.lm <- lm(formula = y ~ x, data = product)
+> abline(result.lm, col = "red")
+> summary(result.lm)
+
+Call:
+lm(formula = y ~ x, data = product)
+
+Residuals:
+     Min       1Q   Median       3Q 
+-1.99669 -0.25741  0.00331  0.26404 
+     Max 
+ 1.26404 
+
+Coefficients:
+            Estimate Std. Error t value
+(Intercept)  0.77886    0.12416   6.273
+x            0.73928    0.03823  19.340
+            Pr(>|t|)    
+(Intercept) 1.45e-09 ***
+x            < 2e-16 ***
+---
+Signif. codes:  
+  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05
+  ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5329 on 262 degrees of freedom
+Multiple R-squared:  0.5881,	Adjusted R-squared:  0.5865 
+F-statistic:   374 on 1 and 262 DF,  p-value: < 2.2e-16
